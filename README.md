@@ -1,6 +1,6 @@
 Velocity Child Theme Paket f Sekolah 4
 =================
-[sekolah5.velocitydeveloper.com](https://www.sekolah4.velocitydeveloper.com/)
+[sekolah4.velocitydeveloper.com](https://www.sekolah4.velocitydeveloper.com/)
 
 Child Theme for the Velocity System WordPress theme.
 
