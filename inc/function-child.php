@@ -120,6 +120,14 @@ function velocitychild_theme_setup()
             ],
         ]);
 
+        // remove panel in customizer
+        Kirki::remove_panel('global_panel');
+        Kirki::remove_panel('panel_header');
+        Kirki::remove_panel('panel_footer');
+        Kirki::remove_panel('panel_antispam');
+        Kirki::remove_control('custom_logo');
+        Kirki::remove_control('display_header_text');
+
     endif;
 
     //remove action from Parent Theme
@@ -180,36 +188,36 @@ function justg_after_wrapper_content()
 //register widget
 add_action('widgets_init', 'justg_widgets_init', 20);
 if (!function_exists('justg_widgets_init')) {
-	function justg_widgets_init()
-	{
-		$icon = '<div class="widget-title-icon"></div>';
-		$before_widget = '<aside id="%1$s" class="widget %2$s">';
-		$after_widget = '</aside>';
-		$before_title = '<h3 class="widget-title position-relative">'.$icon.'<span class="vd-title bg-gradient">';
-		$after_title = '</span></h3>';
-		register_sidebar(
-			array(
-				'name'          => __('Main Sidebar', 'justg'),
-				'id'            => 'main-sidebar',
-				'description'   => __('Main sidebar widget area', 'justg'),
-				'before_widget' => $before_widget,
-				'after_widget'  => $after_widget,
-				'before_title'  => $before_title,
-				'after_title'   => $after_title,
-				'show_in_rest'   => false,
-			)
-		);
-		// register_sidebar(
-		// 	array(
-		// 		'name'          => __('Secondary Sidebar', 'justg'),
-		// 		'id'            => 'secondary-sidebar',
-		// 		'description'   => __('Secondary sidebar widget area', 'justg'),
-		// 		'before_widget' => $before_widget,
-		// 		'after_widget'  => $after_widget,
-		// 		'before_title'  => $before_title,
-		// 		'after_title'   => $after_title,
-		// 		'show_in_rest'   => false,
-		// 	)
-		// );
-	}
+    function justg_widgets_init()
+    {
+        $icon = '<div class="widget-title-icon"></div>';
+        $before_widget = '<aside id="%1$s" class="widget %2$s">';
+        $after_widget = '</aside>';
+        $before_title = '<h3 class="widget-title position-relative">' . $icon . '<span class="vd-title bg-gradient">';
+        $after_title = '</span></h3>';
+        register_sidebar(
+            array(
+                'name'          => __('Main Sidebar', 'justg'),
+                'id'            => 'main-sidebar',
+                'description'   => __('Main sidebar widget area', 'justg'),
+                'before_widget' => $before_widget,
+                'after_widget'  => $after_widget,
+                'before_title'  => $before_title,
+                'after_title'   => $after_title,
+                'show_in_rest'   => false,
+            )
+        );
+        // register_sidebar(
+        // 	array(
+        // 		'name'          => __('Secondary Sidebar', 'justg'),
+        // 		'id'            => 'secondary-sidebar',
+        // 		'description'   => __('Secondary sidebar widget area', 'justg'),
+        // 		'before_widget' => $before_widget,
+        // 		'after_widget'  => $after_widget,
+        // 		'before_title'  => $before_title,
+        // 		'after_title'   => $after_title,
+        // 		'show_in_rest'   => false,
+        // 	)
+        // );
+    }
 }
