@@ -1,223 +1,197 @@
 <?php
-
-/**
- * Fuction yang digunakan di theme ini.
- */
+/** Child theme features and template helpers. */
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly.
+    exit;
 }
 
-add_action('after_setup_theme', 'velocitychild_theme_setup', 9);
+if (!function_exists('velocity_sekolah4_customize_register')) {
+    function velocity_sekolah4_customize_register($wp_customize)
+    {
+        $wp_customize->remove_section('header_image');
 
-function velocitychild_theme_setup()
-{
-
-    // Load justg_child_enqueue_parent_style after theme setup
-    add_action('wp_enqueue_scripts', 'justg_child_enqueue_parent_style', 20);
-
-    if (class_exists('Kirki')) :
-
-        Kirki::add_panel('panel_sekolah', [
-            'priority'    => 10,
-            'title'       => esc_html__('Sekolah', 'justg'),
-            'description' => esc_html__('', 'justg'),
-        ]);
-        ///Section Color
-        Kirki::add_section('section_colorsekolah', [
-            'panel'    => 'panel_sekolah',
-            'title'    => __('Warna', 'justg'),
-            'priority' => 10,
-        ]);
-        Kirki::add_field('justg_config', [
-            'type'        => 'color',
-            'settings'    => 'color_theme',
-            'label'       => __('Warna Tema', 'kirki'),
-            'description' => esc_html__('', 'kirki'),
-            'section'     => 'section_colorsekolah',
-            'default'     => '#0055a0',
-            'transport'   => 'auto',
-            'output'      => [
-                [
-                    'element'   => ':root',
-                    'property'  => '--color-theme',
-                ],
-                [
-                    'element'   => ':root',
-                    'property'  => '--bs-primary',
-                ],
-                [
-                    'element'   => '.border-color-theme',
-                    'property'  => '--bs-border-color',
-                ],
-                [
-                    'element'   => '#primary-menu .dropdown-menu',
-                    'property'  => '--bs-dropdown-link-active-bg',
-                ]
-            ],
-        ]);
-        Kirki::add_field('justg_config', [
-            'type'        => 'color',
-            'settings'    => 'color_theme2',
-            'label'       => __('Warna Tema 2', 'kirki'),
-            'description' => esc_html__('', 'kirki'),
-            'section'     => 'section_colorsekolah',
-            'default'     => '#0b63dd',
-            'transport'   => 'auto',
-            'output'      => [
-                [
-                    'element'   => ':root',
-                    'property'  => '--color-theme-2',
-                ],
-                [
-                    'element'   => ':root',
-                    'property'  => '--bs-secondary',
-                ]
-            ],
-        ]);
-        Kirki::add_field('justg_config', [
-            'type'        => 'background',
-            'settings'    => 'background_themewebsite',
-            'label'       => __('Background Website', 'kirki'),
-            'description' => esc_html__('', 'kirki'),
-            'section'     => 'section_colorsekolah',
-            'default'     => [
-                'background-color'      => '#c68a31',
-                // 'background-image'      => get_stylesheet_directory_uri() . '/images/wall.webp',
-                'background-repeat'     => 'repeat',
-                'background-position'   => 'center center',
-                'background-size'       => 'auto',
-                'background-attachment' => 'fixed',
-            ],
-            'transport'   => 'auto',
-            'output'      => [
-                [
-                    'element'   => ':root[data-bs-theme=light] body',
-                ],
-                [
-                    'element'   => 'body',
-                ],
-            ],
-        ]);
-
-        ///Section Header
-        Kirki::add_section('section_headersekolah', [
-            'panel'    => 'panel_sekolah',
-            'title'    => __('Header', 'justg'),
-            'priority' => 10,
-        ]);
-        Kirki::add_field('justg_config', [
-            'type'        => 'image',
-            'settings'    => 'image_bannerheader',
-            'label'       => esc_html__('Banner Header', 'kirki'),
-            'description' => esc_html__('Upload banner 960x240', 'kirki'),
-            'section'     => 'section_headersekolah',
-            'default'     => '',
-            'partial_refresh'    => [
-                'partial_bannerheader' => [
-                    'selector'        => '.part_bannerheader',
-                    'render_callback' => '__return_false'
-                ]
-            ],
-        ]);
-
-        // remove panel in customizer
-        Kirki::remove_panel('global_panel');
-        Kirki::remove_panel('panel_header');
-        Kirki::remove_panel('panel_footer');
-        Kirki::remove_panel('panel_antispam');
-        Kirki::remove_control('custom_logo');
-        Kirki::remove_control('display_header_text');
-
-    endif;
-
-    //remove action from Parent Theme
-    remove_action('justg_header', 'justg_header_menu');
-    remove_action('justg_do_footer', 'justg_the_footer_open');
-    remove_action('justg_do_footer', 'justg_the_footer_content');
-    remove_action('justg_do_footer', 'justg_the_footer_close');
-    remove_theme_support('widgets-block-editor');
-}
-
-///remove breadcrumbs
-add_action('wp_head', function () {
-    if (!is_single()) {
-        remove_action('justg_before_title', 'justg_breadcrumb');
+        $wp_customize->add_section('velocity_sekolah4_header_options', array(
+            'title'       => wp_get_theme()->get('Name'),
+            'description' => __('Pengaturan foto untuk komposisi header.', 'justg'),
+            'priority'    => 30,
+        ));
+        $photos = array(
+            'velocity_sekolah4_header_photo_1' => array(__('Foto Header Kiri', 'justg'), content_url('/uploads/2017/03/mahsiswa.jpg')),
+            'velocity_sekolah4_header_photo_2' => array(__('Foto Header Tengah', 'justg'), content_url('/uploads/2017/03/Spaces_workshop.jpg')),
+            'velocity_sekolah4_header_photo_3' => array(__('Foto Header Kanan', 'justg'), content_url('/uploads/2015/06/sma-velocity-developer.jpg')),
+        );
+        foreach ($photos as $setting => $photo) {
+            $wp_customize->add_setting($setting, array(
+                'default'           => $photo[1],
+                'sanitize_callback' => 'esc_url_raw',
+            ));
+            if (class_exists('WP_Customize_Image_Control')) {
+                $wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, $setting, array(
+                    'label'   => $photo[0],
+                    'section' => 'velocity_sekolah4_header_options',
+                )));
+            }
+        }
     }
-});
+}
+add_action('customize_register', 'velocity_sekolah4_customize_register', 20);
+
+if (!function_exists('velocity_sekolah4_get_header_photos')) {
+    function velocity_sekolah4_get_header_photos()
+    {
+        $defaults = array(
+            content_url('/uploads/2017/03/mahsiswa.jpg'),
+            content_url('/uploads/2017/03/Spaces_workshop.jpg'),
+            content_url('/uploads/2015/06/sma-velocity-developer.jpg'),
+        );
+        return array(
+            get_theme_mod('velocity_sekolah4_header_photo_1', $defaults[0]),
+            get_theme_mod('velocity_sekolah4_header_photo_2', $defaults[1]),
+            get_theme_mod('velocity_sekolah4_header_photo_3', $defaults[2]),
+        );
+    }
+}
+
+if (!function_exists('velocity_sekolah4_theme_setup')) {
+    function velocity_sekolah4_theme_setup()
+    {
+        add_action('wp_enqueue_scripts', 'justg_child_enqueue_parent_style', 20);
+        remove_action('justg_header', 'justg_header_menu');
+        remove_action('justg_do_footer', 'justg_the_footer_open');
+        remove_action('justg_do_footer', 'justg_the_footer_content');
+        remove_action('justg_do_footer', 'justg_the_footer_close');
+        remove_theme_support('widgets-block-editor');
+    }
+}
+add_action('after_setup_theme', 'velocity_sekolah4_theme_setup', 9);
+
+if (!function_exists('velocity_sekolah4_remove_archive_breadcrumb')) {
+    function velocity_sekolah4_remove_archive_breadcrumb()
+    {
+        if (!is_single()) {
+            remove_action('justg_before_title', 'justg_breadcrumb');
+        }
+    }
+}
+add_action('wp_head', 'velocity_sekolah4_remove_archive_breadcrumb');
 
 if (!function_exists('justg_header_open')) {
     function justg_header_open()
     {
-        echo '<header id="wrapper-header">';
-        echo '<div id="wrapper-navbar" class="container px-2 px-md-0" itemscope itemtype="http://schema.org/WebSite">';
+        echo '<header id="wrapper-header"><div id="wrapper-navbar" class="container px-2 px-md-0" itemscope itemtype="https://schema.org/WebSite">';
     }
 }
 if (!function_exists('justg_header_close')) {
     function justg_header_close()
     {
-        echo '</div>';
-        echo '</header>';
+        echo '</div></header>';
     }
 }
-
-
-///add action builder part
-add_action('justg_header', 'justg_header_berita');
-function justg_header_berita()
-{
-    require_once(get_stylesheet_directory() . '/inc/part-header.php');
-}
-add_action('justg_do_footer', 'justg_footer_berita');
-function justg_footer_berita()
-{
-    require_once(get_stylesheet_directory() . '/inc/part-footer.php');
-}
-add_action('justg_before_wrapper_content', 'justg_before_wrapper_content');
-function justg_before_wrapper_content()
-{
-    echo '<div class="px-2">';
-    echo '<div class="card rounded-0 border-light border-top-0 border-bottom-0 shadow px-0 px-md-2 container">';
-}
-add_action('justg_after_wrapper_content', 'justg_after_wrapper_content');
-function justg_after_wrapper_content()
-{
-    echo '</div>';
-    echo '</div>';
-}
-
-//register widget
-add_action('widgets_init', 'justg_widgets_init', 20);
-if (!function_exists('justg_widgets_init')) {
-    function justg_widgets_init()
+if (!function_exists('velocity_sekolah4_header')) {
+    function velocity_sekolah4_header()
     {
-        $icon = '<div class="widget-title-icon"></div>';
-        $before_widget = '<aside id="%1$s" class="widget %2$s">';
-        $after_widget = '</aside>';
-        $before_title = '<h3 class="widget-title position-relative">' . $icon . '<span class="vd-title bg-gradient">';
-        $after_title = '</span></h3>';
-        register_sidebar(
-            array(
-                'name'          => __('Main Sidebar', 'justg'),
-                'id'            => 'main-sidebar',
-                'description'   => __('Main sidebar widget area', 'justg'),
-                'before_widget' => $before_widget,
-                'after_widget'  => $after_widget,
-                'before_title'  => $before_title,
-                'after_title'   => $after_title,
-                'show_in_rest'   => false,
-            )
-        );
-        // register_sidebar(
-        // 	array(
-        // 		'name'          => __('Secondary Sidebar', 'justg'),
-        // 		'id'            => 'secondary-sidebar',
-        // 		'description'   => __('Secondary sidebar widget area', 'justg'),
-        // 		'before_widget' => $before_widget,
-        // 		'after_widget'  => $after_widget,
-        // 		'before_title'  => $before_title,
-        // 		'after_title'   => $after_title,
-        // 		'show_in_rest'   => false,
-        // 	)
-        // );
+        require get_stylesheet_directory() . '/inc/part-header.php';
     }
 }
+add_action('justg_header', 'velocity_sekolah4_header');
+
+if (!function_exists('velocity_sekolah4_footer')) {
+    function velocity_sekolah4_footer()
+    {
+        require get_stylesheet_directory() . '/inc/part-footer.php';
+    }
+}
+add_action('justg_do_footer', 'velocity_sekolah4_footer');
+
+if (!function_exists('velocity_sekolah4_before_wrapper_content')) {
+    function velocity_sekolah4_before_wrapper_content()
+    {
+        echo '<div class="px-2"><div class="card rounded-0 border-light border-top-0 border-bottom-0 shadow px-0 px-md-2 container">';
+    }
+}
+add_action('justg_before_wrapper_content', 'velocity_sekolah4_before_wrapper_content');
+
+if (!function_exists('velocity_sekolah4_after_wrapper_content')) {
+    function velocity_sekolah4_after_wrapper_content()
+    {
+        echo '</div></div>';
+    }
+}
+add_action('justg_after_wrapper_content', 'velocity_sekolah4_after_wrapper_content');
+
+/** Get the featured image, first content image, or bundled fallback. */
+if (!function_exists('velocity_sekolah4_get_post_image')) {
+    function velocity_sekolah4_get_post_image($post_id = 0, $size = 'large')
+    {
+        $post_id = $post_id ? absint($post_id) : get_the_ID();
+        $thumbnail_id = get_post_thumbnail_id($post_id);
+        if ($thumbnail_id) {
+            $image = wp_get_attachment_image_url($thumbnail_id, $size);
+            if ($image) {
+                return $image;
+            }
+        }
+
+        $content = (string) get_post_field('post_content', $post_id);
+        if (function_exists('has_blocks') && function_exists('parse_blocks') && has_blocks($content)) {
+            foreach (parse_blocks($content) as $block) {
+                if ('core/image' === $block['blockName'] && !empty($block['attrs']['id'])) {
+                    $image = wp_get_attachment_image_url(absint($block['attrs']['id']), $size);
+                    if ($image) {
+                        return $image;
+                    }
+                }
+            }
+        }
+        if (preg_match('/<img[^>]+src=[\'\"]([^\'\"]+)[\'\"]/i', $content, $match)) {
+            return esc_url_raw($match[1]);
+        }
+        return get_stylesheet_directory_uri() . '/img/no-image.webp';
+    }
+}
+
+/** Render a linked Bootstrap 5 ratio thumbnail. */
+if (!function_exists('velocity_sekolah4_post_thumbnail')) {
+    function velocity_sekolah4_post_thumbnail($post_id = 0, $ratio = 'ratio-4x3', $class = '')
+    {
+        $post_id = $post_id ? absint($post_id) : get_the_ID();
+        printf(
+            '<a class="ratio %1$s overflow-hidden bg-light %2$s" href="%3$s" aria-label="%4$s"><img class="w-100 h-100 object-fit-cover" src="%5$s" alt="%6$s" loading="lazy"></a>',
+            esc_attr(sanitize_html_class($ratio)),
+            esc_attr($class),
+            esc_url(get_permalink($post_id)),
+            esc_attr(sprintf(__('Baca %s', 'justg'), get_the_title($post_id))),
+            esc_url(velocity_sekolah4_get_post_image($post_id, 'medium_large')),
+            esc_attr(get_the_title($post_id))
+        );
+    }
+}
+
+if (!function_exists('velocity_sekolah4_widgets_init')) {
+    function velocity_sekolah4_widgets_init()
+    {
+        foreach (range(1, 4) as $footer_widget) {
+            unregister_sidebar('footer-widget-' . $footer_widget);
+        }
+
+        register_sidebar(array(
+            'name'          => __('Main Sidebar', 'justg'),
+            'id'            => 'main-sidebar',
+            'description'   => __('Main sidebar widget area', 'justg'),
+            'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+            'after_widget'  => '</aside>',
+            'before_title'  => '<h3 class="widget-title position-relative"><span class="widget-title-icon" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path d="M4.5 2a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7zm-2 3a.5.5 0 0 0 0 1h11a.5.5 0 0 0 0-1h-11zm2 3a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7zm-2 3a.5.5 0 0 0 0 1h11a.5.5 0 0 0 0-1h-11z"/></svg></span><span class="vd-title bg-gradient">',
+            'after_title'   => '</span></h3>',
+            'show_in_rest'  => false,
+        ));
+    }
+}
+add_action('widgets_init', 'velocity_sekolah4_widgets_init', 20);
+
+if (!function_exists('velocity_sekolah4_bootstrap5_menu_attributes')) {
+    function velocity_sekolah4_bootstrap5_menu_attributes($atts)
+    {
+        unset($atts['data-toggle']);
+        return $atts;
+    }
+}
+add_filter('nav_menu_link_attributes', 'velocity_sekolah4_bootstrap5_menu_attributes', 20);

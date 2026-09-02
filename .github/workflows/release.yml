@@ -1,0 +1,44 @@
+name: Release theme version
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - style.css
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Read and validate theme version
+        id: version
+        shell: bash
+        run: |
+          version=$(sed -n 's/^Version:[[:space:]]*//p' style.css | head -n1 | tr -d '\r')
+          test -n "$version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=v$version" >> "$GITHUB_OUTPUT"
+      - name: Build installable theme archive
+        shell: bash
+        run: |
+          mkdir -p dist/velocity-sekolah4
+          rsync -a --exclude='.git' --exclude='.github' --exclude='dist' ./ dist/velocity-sekolah4/
+          cd dist && zip -qr "velocity-sekolah4-${{ steps.version.outputs.version }}.zip" velocity-sekolah4
+      - name: Create GitHub release when version is new
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          if git rev-parse "${{ steps.version.outputs.tag }}" >/dev/null 2>&1; then
+            echo "Release ${{ steps.version.outputs.tag }} already exists."
+            exit 0
+          fi
+          gh release create "${{ steps.version.outputs.tag }}" \
+            "dist/velocity-sekolah4-${{ steps.version.outputs.version }}.zip" \
+            --target "$GITHUB_SHA" --generate-notes --title "${{ steps.version.outputs.tag }}"

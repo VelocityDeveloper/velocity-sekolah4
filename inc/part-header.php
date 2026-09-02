@@ -4,27 +4,24 @@
         <?php esc_html_e('Main Navigation', 'justg'); ?>
     </h2>
 
-    <?php $bannerheader = velocitytheme_option('image_bannerheader', ''); ?>
-    <div class="part_bannerheader">
-        <?php if ($bannerheader) : ?>
-            <img class="img-fluid w-100" src="<?php echo $bannerheader; ?>" alt="Banner Header" loading="lazy">
-        <?php else : ?>
-            <div class="px-3 py-0 bg-primary text-white">
-                <div class="row align-items-center text-center text-md-start">
-                    <div class="col-md-3 p-2">
-                        <?php echo the_custom_logo(); ?>
-                    </div>
-                    <div class="col-md-9 col-xl-8">
-                        <h3 class="text-white">
-                            <?php echo get_bloginfo('name'); ?>
-                        </h3>
-                        <span class="part_taglineheader">
-                            <?php echo get_option('blogdescription'); ?>
-                        </span>
-                    </div>
-                </div>
+    <?php $header_photos = velocity_sekolah4_get_header_photos(); ?>
+    <div class="header-visual text-white overflow-hidden pb-3">
+        <div class="header-branding">
+            <div class="header-logo text-center">
+                <?php the_custom_logo(); ?>
             </div>
-        <?php endif; ?>
+            <div class="header-identity">
+                <p class="header-site-title mb-0"><?php bloginfo('name'); ?></p>
+                <p class="header-tagline mb-0"><?php echo esc_html(get_bloginfo('description')); ?></p>
+            </div>
+        </div>
+        <div class="header-photo-grid" aria-label="<?php esc_attr_e('Galeri sekolah', 'justg'); ?>">
+            <?php foreach ($header_photos as $index => $photo) : ?>
+                <div class="header-photo header-photo-<?php echo esc_attr($index + 1); ?>">
+                    <img src="<?php echo esc_url($photo); ?>" alt="<?php echo esc_attr(sprintf(__('Foto sekolah %d', 'justg'), $index + 1)); ?>">
+                </div>
+            <?php endforeach; ?>
+        </div>
     </div>
 
     <div class="bg-white p-2 rounded-top">
@@ -54,7 +51,7 @@
                         'fallback_cb'     => '',
                         'menu_id'         => 'primary-menu',
                         'depth'           => 4,
-                        'walker'          => new justg_WP_Bootstrap_Navwalker(),
+                        'walker'          => class_exists('justg_WP_Bootstrap_Navwalker') ? new justg_WP_Bootstrap_Navwalker() : '',
                     )
                 );
                 ?>

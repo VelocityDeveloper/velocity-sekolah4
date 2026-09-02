@@ -27,12 +27,19 @@ if (!function_exists('justg_child_enqueue_parent_style')) {
             $theme->parent()->get('Version')
         );
 
+        wp_enqueue_style(
+            'velocity-sekolah4-inter',
+            'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap',
+            array(),
+            null
+        );
+
         // $css_version = $theme->parent()->get('Version') . '.' . filemtime( get_stylesheet_directory() . '/css/custom.css' );
-        $css_version = $theme->parent()->get('Version');
+        $css_version = $theme->get('Version') . '.' . filemtime(get_stylesheet_directory() . '/css/custom.css');
         wp_enqueue_style(
             'custom-style',
             get_stylesheet_directory_uri() . '/css/custom.css',
-            array(),  // if the parent theme code has a dependency, copy it to here
+            array($parenthandle, 'velocity-sekolah4-inter'),
             $css_version
         );
 
@@ -44,6 +51,6 @@ if (!function_exists('justg_child_enqueue_parent_style')) {
         );
 
         $js_version = $theme->parent()->get('Version') . '.' . filemtime(get_stylesheet_directory() . '/js/custom.js');
-        wp_enqueue_script('justg-custom-scripts', get_stylesheet_directory_uri() . '/js/custom.js', array(), $js_version, true);
+        wp_enqueue_script('justg-custom-scripts', get_stylesheet_directory_uri() . '/js/custom.js', array('jquery'), $js_version, true);
     }
 }
